@@ -2,8 +2,8 @@
 from pathlib import Path
 import os
 
-from log import initLog, log
-from keywords import OK, FAILED
+from lib.loging import Log
+from lib.keywords import keywords
 
 PATHS_FOLDERS: dict = {
     "CONFIG_DIR": rf"{Path.home()}\.pyPrompt",
@@ -13,41 +13,41 @@ PATH_FILES: dict = {
     "PLUGIN_CONFIG_FILE": rf"{Path.home()}\.pyPrompt\settings.json",
 }
 
-def launch():
+def launch() -> bool:
         # Run initLog before running app
-        initLog()
+        Log.init_log()
         
-        is_OK = check_folders()
+        methods: list = [check_folders, check_files, default_config, read_config]
+        for method in methods:
+            if method():
+                print("Ok")
+            else:
+                raise "Err"
         
-        if is_OK: is_OK = check_files()
-        if  is_OK: is_OK = read_config()
-        else: default_config()
+        return keywords.OK
         
-        return OK
-        
-def check_folders():
+def check_folders() -> bool:
     """Check files and folders before starting up app"""
     for key, folder in PATHS_FOLDERS.items():
         if not os.path.exists(folder): 
             Path.mkdir(folder)
-            log(f"DIR [{folder}] CREATED ! KEY: {key}")
-    return OK
+            Log.log(f"DIR [{folder}] CREATED ! KEY: {key}")
+    return keywords.OK
 
-def check_files():
+def check_files() -> bool:
     """Check if config file exist"""
     failed_count = 0
     for key, folder in PATH_FILES.items():
         if not os.path.exists(folder):
             with open(folder, "x") as file:
                 file.write('{}')
-                log(f'FILE [{folder}] CREATED ! KEY: {key}')
+                Log.log(f'FILE [{folder}] CREATED ! KEY: {key}')
                 failed_count += 1
-        if failed_count > 0: return FAILED
-        else: return OK
-        
+        if failed_count > 0: return keywords.FAILED
+        else: return keywords.OK 
 
-def default_config():
-    pass
+def default_config() -> bool:
+    return True
 
-def read_config():
-    pass
+def read_config() -> bool:
+    return True

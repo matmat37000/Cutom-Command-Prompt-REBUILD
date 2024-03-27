@@ -1,2 +1,4 @@
-OK = True
-FAILED = False
+
+class keywords:
+    OK = True
+    FAILED = False

@@ -1,2 +1,5 @@
-/.vscode
-/logs.txt
+.vscode/
+logs.txt
+
+# Python
+**/__pycache__/
